@@ -1,0 +1,26 @@
+{
+  "name": "scaling-tricks-for-geo",
+  "version": "0.0.0",
+  "authors": [
+    "Peter Szerzo <szerzo.peter@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "backbone": "~1.2.1",
+    "underscore": "~1.8.3",
+    "jquery": "~2.1.4",
+    "marionette": "~2.4.1",
+    "d3": "~3.5.5",
+    "leaflet": "~0.7.3"
+  },
+  "resolutions": {
+    "underscore": ">=1.4.0 <=1.8.3"
+  }
+}

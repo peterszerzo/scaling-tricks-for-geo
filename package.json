@@ -1,0 +1,16 @@
+{
+  "name": "scaling-tricks-for-geo",
+  "version": "1.0.0",
+  "description": "Draft blog post and example project to demonstrate the techniques I've used to create decently scaling interactive mapping applications.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-jshint": "^1.11.0",
+    "gulp-mocha-phantomjs": "^0.6.1"
+  }
+}

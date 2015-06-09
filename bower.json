@@ -18,7 +18,8 @@
     "jquery": "~2.1.4",
     "marionette": "~2.4.1",
     "d3": "~3.5.5",
-    "leaflet": "~0.7.3"
+    "leaflet": "~0.7.3",
+    "topojson": "~1.6.19"
   },
   "resolutions": {
     "underscore": ">=1.4.0 <=1.8.3"

@@ -29,7 +29,7 @@ My initial take was to embed a model id and made an outside reference to a more 
 
 All of a sudden, we can retrieve this references inside rendering and event handling code, a feature we are so used to from 'conventional' user interface engineering.
 
-And since d3 is so lenient, there is no doubt that I can also get away with mixing in an event system. And other things as I please. I named these boosted JS objects Rich GeoJsons, used in writing as well as in the example project.
+And since d3 is so lenient, there is no doubt that I can also get away with mixing in an event system. And other things as I please. I named these boosted JS objects Rich GeoJsons, used in writing as well as in the example project. See example implementation in 
 
 #### A Self-sufficient Model
 

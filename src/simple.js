@@ -1,73 +1,80 @@
 stg.simple = function() {
 
-	var states = new stg.States();
-	states.fetch();
-	states.on('sync', function() {});
-
 	/*
 	 * Get shape file from server.
 	 * @param {function} next - Callback.
 	 */
-	var getGeoJson = function(next) {
-		$.get('data/us-states-10m.json', function(data) {
+	var fetchGeoJson = function(path, next) {
+		$.get(path, function(data) {
 			data = topojson.feature(data, data.objects.states);
 			next(data);
 		});
 	};
+
 
 	/* 
 	 * Visualize.
 	 * @param {object} geoJson - Shape file.
 	 * @param {object} collection - Backbone collection instance.
 	 */
-	var visualize = function(geoJson, collection) {
+	var visualize = function(rgj) {
 		
-		var getModelByFeature = function(feature) {
-			return collection.findWhere({ id: feature.id });
-		};
-
 		var svg = d3.select('.viz').append('svg'),
 			g = svg.append('g'),
 			projection = d3.geo.albersUsa(),
 			path = d3.geo.path().projection(projection);
 
+		var setVizText = function(text) {
+			$('.viz__text').html(text);
+		};
+
 		g.selectAll('path')
-			.data(geoJson.features)
+			.data(rgj.features)
 			.enter()
 			.append('path')
 			.attr({ 
 				d: path,
 				class: function(feature) {
-					var model = getModelByFeature(feature);
+					var model = feature._model;
 					if (model) {
 						return model.hasConsiderableSize() ? 'active' : 'inactive';
 					}
 				}
 			})
 			.on('click', function(feature) { 
-				var model = getModelByFeature(feature);
+				var model = feature._model;
+				setVizText(model.getSummary());
 			});
 
 	};
 
 
-	var getRich = function(geoJson, collection) {
-		var rgj;
-		rgj = new stg.RichGeoJson(geoJson);
-		rgj.injectCollection(collection, 'id');
-		// rgj = new stg.RichGeoJson();
-		// rgj.buildFromLatLongCollection(collection);
-		// console.log(rgj);
-	};
+	// Create collection.
+	var states = new stg.States();
+	states.fetch();
 
-	// Launch visualization.
-	getGeoJson(function(geoJson) { 
-		visualize(geoJson, states); 
+	// Configure rich geojson when the states are fetched.
+	states.on('sync', function() {
+
+		var rgj = new stg.RichGeoJson();
+
+		// Set ready callback before building rgj.
+		rgj.onReady = function() {
+			visualize(rgj);
+		};
+
+		//
+		// 
+		//
+
+		// Fetch states data.
+		fetchGeoJson('data/us-states-10m.json', function(data) {
+			rgj.set(data);
+			rgj.injectCollection(states, 'id');
+		});
+
 	});
 
-	// Launch visualization.
-	getGeoJson(function(geoJson) { 
-		getRich(geoJson, states); 
-	});
+	
 
 };

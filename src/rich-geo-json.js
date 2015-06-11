@@ -11,12 +11,7 @@ stg.RichGeoJson = Marionette.Object.extend({
 	 * @returns {object} this
 	 */
 	initialize: function(geoJson) {
-		this.type = 'FeatureCollection';
-		if (typeof geoJson !== "undefined") {
-			this.features = geoJson.features;
-		} else {
-			this.features = [];
-		}
+		this.set(geoJson);
 		return this;
 	},
 
@@ -38,6 +33,22 @@ stg.RichGeoJson = Marionette.Object.extend({
 	 */
 	isEmpty: function() {
 		return (this.features.length === 0);
+	},
+
+
+	/*
+	 * Set geoJson
+	 * @param {object} geoJson 
+	 * @returns {object} this
+	 */
+	set: function(geoJson) {
+		this.type = 'FeatureCollection';
+		if (stg.util.exists(geoJson)) {
+			this.features = geoJson.features;
+		} else {
+			this.features = [];
+		}
+		return this;
 	},
 
 
@@ -79,7 +90,7 @@ stg.RichGeoJson = Marionette.Object.extend({
 		});
 
 		// Execute onReady callback if exists.
-		if (stg.util(this.onReady)) { this.onReady(); }
+		if (stg.util.exists(this.onReady)) { this.onReady(); }
 
 		return this;
 	},
@@ -126,7 +137,7 @@ stg.RichGeoJson = Marionette.Object.extend({
 		});
 
 		// Execute onReady callback if exists.
-		if (stg.util(this.onReady)) { this.onReady(); }
+		if (stg.util.exists(this.onReady)) { this.onReady(); }
 
 		return this;
 

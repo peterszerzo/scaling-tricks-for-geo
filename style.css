@@ -40,11 +40,21 @@ html, body {
 }
 
 .viz {
+	position: relative;
 	border-radius: 8px;
 	width: 1000px;
 	height: 500px;
 	margin: auto;
 	background-color: #ddd;
+}
+
+.viz__text {
+	width: 200px;
+	position: absolute;
+	bottom: 20px;
+	right: 20px;
+	font-size(21px);
+	text-align: right;
 }
 
 .viz svg {

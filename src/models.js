@@ -13,6 +13,12 @@ stg.State = Backbone.Model.extend({
 		var area = this.get('Total area in (mi2)'),
 			limitArea = this.collection.getTotalArea() * 0.025;
 		return (area > limitArea);
+	},
+	getSummary: function() {
+		var text = this.hasConsiderableSize() ? 
+			' has considerable size - its area is greater than 2.5% of the total area of the US.' : 
+			' does not have considerable size - its area is not greater than 2.5% of the total area of the US.';
+		return this.get('State') + text;
 	}
 });
 

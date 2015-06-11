@@ -15,7 +15,8 @@ gulp.task('spec', ['lint'], function() {
 });
 
 gulp.task('deploy', function() {
-	return gulp.src([ 'index.html', 'style.css', 'data/**/*.json', 'fonts/**/*', 'bower_components/**/*', 'src/**/*.js' ]);
+	return gulp.src([ './index.html', './style.css', './data/**/*.json', './fonts/**/*.*', './bower_components/**/*.js', './src/**/*.js' ])
+		.pipe(ghPages());
 });
 
 gulp.task('default', [ 'spec' ]);

@@ -32,23 +32,12 @@ stg.RichGeoJson = Marionette.Object.extend({
 	},
 
 
-	isReady: function() {
-		return (this.features.length > 0);
-	},
-
-
 	/*
-	 * Set callback to execute when object is ready.
-	 * @returns {object} this
+	 * Checks if is empty.
+	 * 
 	 */
-	onReady: function(next) {
-		if (this.isReady()) {
-			// Run callback if already ready.
-			return next();
-		} else {
-			// Run callback on ready event.
-			this.on('sync', next);
-		}
+	isEmpty: function() {
+		return (this.features.length === 0);
 	},
 
 
@@ -61,8 +50,12 @@ stg.RichGeoJson = Marionette.Object.extend({
 	 */
 	injectCollection: function(collection, key, options) {
 
+		var injectionLogs;
+
+		options = options || this.injectionToleranceOptions;
+
 		// Create logs to help visualization creators investigate whether loose injections work properly.
-		var injectionLogs = [];
+		injectionLogs = [];
 
 		// // Example options:
 		// options = {
@@ -84,6 +77,10 @@ stg.RichGeoJson = Marionette.Object.extend({
 			model = collection.findWhere(query);
 			if (model) { feature._model = model; }
 		});
+
+		// Execute onReady callback if exists.
+		if (stg.util(this.onReady)) { this.onReady(); }
+
 		return this;
 	},
 
@@ -108,19 +105,15 @@ stg.RichGeoJson = Marionette.Object.extend({
 	 * @param {object} collection
 	 * @param {object} buildOptions
 	 */
-	buildFromLatLongCollection: function(collection, buildOptions) {
+	buildFromLatLongCollection: function(collection, options) {
 
 		var self = this;
 
-		// Build comprehensive list of possible values.
-		buildOptions = buildOptions || {
-			latKeys: [ 'lat', 'latitude', 'Latitude', 'Lat' ],
-			longKeys: [ 'long', 'lng', 'longitude', 'Longitude', 'Long', 'Lng' ]
-		};
+		options = options || this.buildFromLatLongOptions;
 
 		collection.each(function(model) {
-			var lat = self.getValue(model, buildOptions.latKeys),
-				lng = self.getValue(model, buildOptions.longKeys),
+			var lat = self.getValue(model, options.latKeys),
+				lng = self.getValue(model, options.longKeys),
 				feature = {
 				type: 'Feature',
 				_model: model,
@@ -132,17 +125,29 @@ stg.RichGeoJson = Marionette.Object.extend({
 			self.addFeature(feature);
 		});
 
+		// Execute onReady callback if exists.
+		if (stg.util(this.onReady)) { this.onReady(); }
+
 		return this;
 
 	},
 
 
 	/*
-	 * 
+	 * Default list of build-from-lat-long options.
 	 */
-	toleranceOptions: {
+	buildFromLatLongOptions: {
+		latKeys: [ 'lat', 'latitude', 'Latitude', 'Lat' ],
+		longKeys: [ 'long', 'lng', 'longitude', 'Longitude', 'Long', 'Lng' ]
+	},
+
+
+	/*
+	 * Default tolerance options.
+	 */
+	injectionToleranceOptions: {
 		// When primary injection key is not matched, use backups.
-		backupKeys: [ 'name', 'title' ],
+		backupKeys: [ ],
 		// Is matching case sensitive.
 		isCaseSensitive: true,
 		// Most custom matcher 

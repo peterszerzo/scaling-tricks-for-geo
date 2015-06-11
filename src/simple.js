@@ -37,7 +37,7 @@ stg.simple = function() {
 				class: function(feature) {
 					var model = feature._model;
 					if (model) {
-						return model.hasConsiderableSize() ? 'active' : 'inactive';
+						return model.isRealBig() ? 'active' : 'inactive';
 					}
 				}
 			})
@@ -64,7 +64,8 @@ stg.simple = function() {
 		};
 
 		//
-		// 
+		// What comes next may be synchronous buildup or async geodata fetching.
+		// onReady executes in both cases.
 		//
 
 		// Fetch states data.
@@ -74,7 +75,5 @@ stg.simple = function() {
 		});
 
 	});
-
-	
 
 };

@@ -2,12 +2,12 @@ Draft blog post and example project.
 
 # On Scalable Interactive Mapping: Recent Favorites Tricks
 
-I spent some time thinking up some strategies that made my recent interactive mapping code more versatile, modular, dry and, best of all, fun to write and maintain. Enough, in fact, that I decided to share them in this blog post. For readers eager to jump right to live, working code, this [test project](https://github.com/pickled-plugins/scaling-tricks-for-geo) uses most of the tricks I talk about, touching on the following topics:
+I spent some time thinking up some strategies that made my recent interactive mapping code more versatile, modular, dry and, best of all, fun to write and maintain. Eventually, they found their way to this blog post. For those of you eager to jump right to live, working code, this [test project](https://github.com/pickled-plugins/scaling-tricks-for-geo) uses most of the tricks I talk about, touching on the following topics:
 * a look at interactive data visualizations inside conventional MV* architectures.
 * a smarter flavor of geodata that reintroduces featureful data models inside interactive map views.
-* a versatile rendering workflow that works the same for map pins, counties, states and countries alike, whether they need additional shape files fetched or not.
+* a versatile rendering workflow that aims to work the same way for rendering lat-long pins, counties, states and countries alike, whether they need additional shape files fetched or not.
 
-The technology stack: [d3.js](http://d3js.org/) and [Leaflet.js](http://leafletjs.com/) (Leaflet coming soon) render data in [GeoJSON](http://geojson.org/) format, all within [Backbone.js](http://backbonejs.org/) and [Marionette.js](http://marionettejs.com/) apps. I also have a feeling that the ideas and code samples I talk about may work well with other frameworks such as [Angular](https://angularjs.org/) or [Ember](http://emberjs.com/), and especially as lightweight helpers if you don't use a framework at all.
+The technology stack: [d3.js](http://d3js.org/) and [Leaflet.js](http://leafletjs.com/) (Leaflet coming soon) render data in [GeoJSON](http://geojson.org/) format, all within [Backbone.js](http://backbonejs.org/) and [Marionette.js](http://marionettejs.com/) apps. I also have a feeling that the ideas and code samples I talk about will work well with other frameworks such as [Angular](https://angularjs.org/), [Ember](http://emberjs.com/) or [React](http://facebook.github.io/react/), and especially as lightweight helpers if you don't use a framework at all. In a later post, I may touch on the implementation details that would make all this code framework-agnostic - after all, the mapping projects I am currently building are moving away from Backbone Views for React, and who knows what else in a month or two.
 
 To run the test project, navigate to the root of the project folder in the command line and run a simple Python server such as ``python -m SimpleHTTPServer 1848``. Then, in the browser, navigate to ``localhost:1848``. The main rendering code is in ``src/simple.js``, important bits and pieces in the other files.
 
@@ -65,11 +65,11 @@ If we look at a sample rendering code, we see how easily we retrieve these refer
 			/* And hello again! */
 		});
 
-To facilitate injecting model references into a GeoJSON object, I wrote a constructor that generates GeoJSON-like objects directly passable to d3 for rendering, along with some mixins and convenience methods for building, extending or converting static data into the above format. I named this constructor ``stg.RichGeoJSON()`` (``stg`` being is the global namespace, acronym for scaling tricks for geo), referenced in the test project and in the post from this point on.
+To facilitate smuggling, or more formally, injecting model references into a GeoJSON object, I wrote a constructor that generates GeoJSON-like objects directly passable to d3 for rendering, along with some mixins and convenience methods for building, extending or converting static data into the above format. I named this constructor ``stg.RichGeoJSON()`` (``stg`` being is the global namespace, acronym for scaling tricks for geo), referenced in the test project and in the post from this point on.
 
 I was very excited to find that ``d3`` is so welcoming to smarter objects like this, so I went ahead and enhanced them some more. Could a build-in event system be useful? Anything else? Let's find out.
 
-#### Using a Self-sufficient Model
+#### The Self-sufficient GeoModel
 
 I invite you to think through mapping some datasets with some ``new stg.RichGeoJSON()``'s. Here is the first one:
 
@@ -79,7 +79,7 @@ I invite you to think through mapping some datasets with some ``new stg.RichGeoJ
 		{ name: 'pin three', size: 6, latitude: 37.3, longitude: 72 }
 	];
 
-Make them into Backbone models, squeeze the latitudes/longitudes into arrays to populate each GeoJSON feature's ``geometry`` field, add the ``_model`` reference to the feature, build all features up to a GeoJSON, ship it off and done. The ``stg.RichGeoJSON`` constructor I prototyped even provides a method to do this automatically with some room for customization:
+Make them into Backbone models, squeeze the latitudes/longitudes into arrays to populate each GeoJSON feature's ``geometry`` field, add the ``_model`` reference to the feature, build all features up to a GeoJSON, ship it off and done. The ``stg.RichGeoJSON`` constructor even provides a method to do this automatically with some room for customization:
 
 	// stg.Pins extends from Backbone.Collection
 	collection = new stg.Pins(collectionData);
@@ -92,7 +92,7 @@ Make them into Backbone models, squeeze the latitudes/longitudes into arrays to 
 	});
 	// proceed to rendering
 
-To supplement this simple GeoJSON builder, I added support for messy, inconsistent data that may contain latitude and longitude values under different keys - an idea I have been using here and there - possibly in too many places - to work with data that has inconsistent format, or to avoid reconfiguring parsing methods to accommodate different datasets. Leaving it at that for the moment, though, onwards to the next data set, which looks like this:
+To supplement this simple GeoJSON builder, I added support for messy, inconsistent data that may contain latitude and longitude values under different keys to work with data that has inconsistent format, or to avoid reconfiguring parsing methods to accommodate different datasets. Leaving it at that for the moment, though, onwards to the next data set, which looks like this:
 
 	// 2013 population data taken from Wikipedia for demonstration purposes.
 	statesData = [
@@ -114,7 +114,7 @@ After we've made this into a Backbone Collection and realized we're dealing with
 
 The ``injectOptions`` specifies additional options that can be used to match models with GeoJSON features. It is not currently implemented in the example, but it is definitely something I'd like to explore in detail in a later discussion. Some features it could include:
 * case-sensitivity.
-* the number of characters that can be extra or off (a collection item with ``name: 'new\tjersey'`` could still be matched with a feature with ``name: 'New Jersey'``).
+* the number of characters that can be extra or off (a collection item with ``name: 'new\tjerseyx'`` could still be matched with a feature with ``name: 'New Jersey'``).
 * backup join keys. If there is no name field match, maybe there is a ``'state'``, or we can try our luck with an ``'id'``.
 * an entirely custom, project-specific join function, taking a model and a feature as parameters, and returning a boolean telling us whether they match.
 

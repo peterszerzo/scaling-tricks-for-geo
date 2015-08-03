@@ -173,3 +173,7 @@ For those of you familiar with the [BackboneD3View](https://github.com/akre54/Ba
 I think so. Writing code using these patterns allowed for a lot of organizational and semantic clarity, fewer bugs and more flexibility to implement new features. That said, there is a lot of personal preference in the way I approached structuring my mapping code, and I am eager to hear your thoughts on how to assign responsibilities and refactor components. If you have any, please feel free to write them out on [GitHub](https://github.com/pickled-plugins/scaling-tricks-for-geo/issues).
 
 Otherwise or until then, happy mapping!
+
+## Acknowledgements
+
+Many thanks for Tom McWright and Georgia Bullen for reviewing the content and clarity of this post. Since it is the very first one I publish, their encouragement went a long way!

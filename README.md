@@ -142,15 +142,28 @@ The data- and model-related implementations above centered around polymorphism, 
 
 At this point, I really got used to Backbone views, and so, inspired by Shirley's code examples, I ended up splitting up my d3 code into methods of a custom view object - methods that copy a Backbone view's API and thus behave like any other view my app uses.
 
-The subtle difference in my implementation was that I didn't extend from a ``Backbone.View``, but from a generic ``Marionette.Object`` - which, for those of you used to other frameworks, just an object that has an event system mixed into it, and calls ``initialize`` when instantiated so one doesn't need to touch the constructor.
+	// Extend from Backbone's view to have access to an event system
+	//   and a more expressive constructor definition.
+	View = Backbone.View.extend({
 
-	View = Marionette.Object.extend({
 		initialize: function() {},
-		onRender: function() {},
-		renderContainer: ,
+
 		render: function() {},
-		update: function() {},
+
+		// Render svg content.
+		render: function() {},
+
+		// Render the visualizations svg container and an inside group. Store these on the instance.
+		//   Called from within this.render().
+		_renderSvgContainer: function() {},
+
+		// Update attributes. Called within render, and as a lightweight update method
+		//   when the data doesn't change, but its presentation does (e.g. when a map is recolored).
+		updateAttributes: function() {},
+
+		// Unbind event listeners and remove elements.
 		destroy: function() {}
+
 	});
 
 For those of you familiar with the [BackboneD3View](https://github.com/akre54/Backbone.D3View) project, you may notice the many similarities. This time, I simply opted for a more simplistic solution, lightly built from scratch.

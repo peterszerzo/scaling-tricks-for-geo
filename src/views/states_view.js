@@ -64,7 +64,8 @@ stg.StatesView = Backbone.View.extend({
             .off('mouseleave');
     },
 
-    // Update attributes.
+    // Update attributes. Called within render, and as a lightweight update method
+    //   when the data doesn't change, but its presentation does (e.g. when a map is recolored).
     updateAttributes: function() {
         projection = d3.geo.albersUsa(),
         path = d3.geo.path().projection(projection);

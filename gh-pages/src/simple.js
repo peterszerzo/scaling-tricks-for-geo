@@ -11,6 +11,7 @@ stg.simple = function() {
 		});
 	};
 
+
 	/* 
 	 * Visualize.
 	 * @param {object} geoJson - Shape file.
@@ -40,15 +41,13 @@ stg.simple = function() {
 					}
 				}
 			})
-			.on('mouseenter', function(feature) { 
+			.on('click', function(feature) { 
 				var model = feature._model;
 				setVizText(model.getSummary());
-			})
-			.on('mouseleave', function() {
-				setVizText('');
 			});
 
 	};
+
 
 	// Create collection.
 	var states = new stg.States();

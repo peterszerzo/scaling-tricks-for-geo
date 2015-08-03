@@ -5,7 +5,9 @@
     font-stretch: normal;
 }
 
-* { -webkit-font-smoothing: antialiased; }
+* {
+	-webkit-font-smoothing: antialiased; 
+}
 
 html, body {
 	margin: 0;
@@ -34,25 +36,7 @@ html, body {
 .subtitle {
 	font-size: 28px;
 	margin-top: 20px;
-	margin-bottom: 40px;
-}
-
-.main-link {
-	border: 2px solid black;
-	padding: 8px;
-	text-decoration: none;
-	color: black;
-	display: block;
-	width: 150px;
-	border-radius: 6px;
-	text-align: center;
-	font-size: 24px;
-	margin: 0px auto 50px;
-	opacity: 0.4;
-}
-
-.main-link:hover {
-	opacity: 1;
+	margin-bottom: 80px;
 }
 
 .viz {
@@ -60,7 +44,7 @@ html, body {
 	border-radius: 8px;
 	width: 1000px;
 	height: 500px;
-	margin: auto auto 120px auto;
+	margin: auto;
 	background-color: #ddd;
 }
 

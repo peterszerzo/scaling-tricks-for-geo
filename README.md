@@ -136,8 +136,6 @@ I made ``rgj`` smart enough to execute ``onReady`` after either a build or an in
 
 ### On View Rendering: Conventional, Interactive, Data-Driven
 
-Note: this section is in its very early stages of writing and is not yet covered in the test project. May break off to a follow-up blog post.
-
 The data- and model-related implementations above centered around polymorphism, and view-related ones did the same. From my very first experiences tinkering with d3 code, I had a hard time keeping my code clean, and generally felt sceptical that most d3 code examples available online, with all their nesting and lack of high-level clarity, could scale (in saying so, I do not mean to imply that these insightful pieces of code failed at their intended purpose).
 
 At this point, I really got used to Backbone views, and so, inspired by Shirley's code examples, I ended up splitting up my d3 code into methods of a custom view object - methods that copy a Backbone view's API and thus behave like any other view my app uses. The difference in my implementation was that I didn't extend from a ``Backbone.View``, but from a generic ``Marionette.Object`` - which, for those of you used to other frameworks, just an object that has an event system mixed into it, and calls ``initialize`` when instantiated so one doesn't need to touch the constructor.

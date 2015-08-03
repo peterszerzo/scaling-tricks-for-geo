@@ -65,13 +65,13 @@ If we look at a sample rendering code, we see how easily we retrieve these refer
 			/* And hello again! */
 		});
 
-To facilitate smuggling, or more formally, injecting model references into a GeoJSON object, I wrote a constructor that generates GeoJSON-like objects directly passable to d3 for rendering, along with some mixins and convenience methods for building, extending or converting static data into the above format. I named this constructor ``stg.RichGeoJSON()`` (``stg`` being is the global namespace, acronym for scaling tricks for geo), referenced in the test project and in the post from this point on.
+To facilitate smuggling, or more formally, injecting model references into a GeoJSON object, I wrote a constructor that generates GeoJSON-like objects directly passable to d3 for rendering, along with some mixins and convenience methods for building, extending or converting static data into the above format. I named this constructor ``stg.RichGeoJSON()`` (``stg`` is the global namespace, acronym for scaling tricks for geo), referenced in the test project and in the post from this point on.
 
 I was very excited to find that ``d3`` is so welcoming to smarter objects like this, so I went ahead and enhanced them some more. Could a build-in event system be useful? Anything else? Let's find out.
 
 #### The Self-sufficient GeoModel
 
-I invite you to think through mapping some datasets with some ``new stg.RichGeoJSON()``'s. Here is the first one:
+Let's think through the process of mapping some datasets with some ``new stg.RichGeoJSON()``'s. First up:
 
 	collectionData = [
 		{ name: 'pin one', size: 2, latitude: 37, longitude: 78 },
@@ -79,7 +79,7 @@ I invite you to think through mapping some datasets with some ``new stg.RichGeoJ
 		{ name: 'pin three', size: 6, latitude: 37.3, longitude: 72 }
 	];
 
-Make them into Backbone models, squeeze the latitudes/longitudes into arrays to populate each GeoJSON feature's ``geometry`` field, add the ``_model`` reference to the feature, build all features up to a GeoJSON, ship it off and done. The ``stg.RichGeoJSON`` constructor even provides a method to do this automatically with some room for customization:
+I would personally make the inner objects into Backbone models, squeeze the latitudes/longitudes into arrays to populate each GeoJSON feature's ``geometry`` field, add a model reference to the feature under the ``_model`` key, build all features up into a GeoJSON, and ship it off to ``d3`` for rendering (scroll down for more on that). The ``stg.RichGeoJSON`` constructor even provides a method to do this automatically with some room for customization:
 
 	// stg.Pins extends from Backbone.Collection
 	collection = new stg.Pins(collectionData);
@@ -92,7 +92,9 @@ Make them into Backbone models, squeeze the latitudes/longitudes into arrays to 
 	});
 	// proceed to rendering
 
-To supplement this simple GeoJSON builder, I added support for messy, inconsistent data that may contain latitude and longitude values under different keys to work with data that has inconsistent format, or to avoid reconfiguring parsing methods to accommodate different datasets. Leaving it at that for the moment, though, onwards to the next data set, which looks like this:
+As a bonus feature, I added support for messy, inconsistent data that may contain latitude and longitude values under different keys. This allowed me to work with data that has inconsistent format without the need to reconfigure parsing methods each time.
+
+Leaving it at that for now, our next dataset looks like this:
 
 	// 2013 population data taken from Wikipedia for demonstration purposes.
 	statesData = [
@@ -122,7 +124,7 @@ The ``injectOptions`` specifies additional options that can be used to match mod
 
 #### Sync and Async GeoJSON in the Same App
 
-The above implementations for the US states visualization and the map pins one look a bit different. The latter is synchronous and yields ``richGeoJSON`` immediately, while the former may keep a spinner icon waiting through a five-second server lag before it retrieves the shape data and carries on with the rendering. I am not very happy keeping these different implementations in mind, adding rendering logic in different places, one roaming free and the other buried inside an ajax callback. I settled with writing asynchronous(-looking) code whether I needed it or not, as follows:
+The above implementations for the US states visualization and the map pins one look a bit different. The latter is synchronous and yields ``richGeoJSON`` immediately, while the former may keep a spinner icon waiting through a two-second server lag before it retrieves the shape data and carries on with the rendering. I am not very happy keeping these different implementations in mind, adding rendering logic in different places, one roaming free and the other buried inside an ajax callback. I settled with writing asynchronous(-looking) code whether I needed it or not, as follows:
 
 	var rgj = new stg.RichGeoJSON();
 	// set callback to execute when object is ready
@@ -132,7 +134,7 @@ The above implementations for the US states visualization and the map pins one l
 	// construct rgj here, whether through build-from-lat-long or ajax-fetch-and-inject
 	// onReady called automatically when things are ready.
 
-I made ``rgj`` smart enough to execute ``onReady`` after either a build or an inject is complete, at which point we have all we need to send our logic-packed shapes over to rendering. I found this code to be more readable and uniform, making my app behave the same for whatever data that rolls in. I left out a fair amount of detail, and even so, I have no doubt that there is a lot of room here for refining and refactoring.
+The ``rgj`` instance will remember to execute its ``onReady`` method after either a build or an inject is complete, at which point we have all we need to send our logic-packed shapes over to rendering. I found this code to be more readable and uniform, making my app behave the same for whatever data that rolled in. In the end, I managed to share a fair amount of code between rendering ready-available latitude-longitude points or shape files. Rendering 
 
 ### On View Rendering: Conventional, Interactive, Data-Driven
 
@@ -151,8 +153,10 @@ The subtle difference in my implementation was that I didn't extend from a ``Bac
 		destroy: function() {}
 	});
 
-For those of you familiar with the [BackboneD3View](https://github.com/akre54/Backbone.D3View) project, you may notice the similarities. This time, I simply opted for a more simplistic solution, lightly built from scratch.
+For those of you familiar with the [BackboneD3View](https://github.com/akre54/Backbone.D3View) project, you may notice the many similarities. This time, I simply opted for a more simplistic solution, lightly built from scratch.
 
 ## Worth it?
 
-I think so. Writing code using these patterns allowed for a lot of semantic clarity, code sharing and maintainability. There are other ways to approach things,  I look forward to hearing suggestions on how to move around responsibilities, factor in, out and over. Otherwise of until then, happy mapping!
+I think so. Writing code using these patterns allowed for a lot of organizational and semantic clarity, fewer bugs and more flexibility to implement new features. That said, there is a lot of personal preference in the way I approached structuring my mapping code, and I am eager to hear your thoughts on how to assign responsibilities and refactor components. If you have any, please feel free to write them out on [GitHub](https://github.com/pickled-plugins/scaling-tricks-for-geo/issues).
+
+Otherwise or until then, happy mapping!

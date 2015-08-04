@@ -61,9 +61,14 @@ stg.RichGeoJson = Marionette.Object.extend({
 	 */
 	injectCollection: function(collection, key, options) {
 
-		var injectionLogs;
+		// To be implemented.
+		var injectionLogs = [ 
+			'The injection went alright.',
+			'This method may be extended so that I can include information such as how many models in the collection could be injected successfully.'
+		];
 
-		options = options || this.injectionToleranceOptions;
+		// Use default options if none is specified.
+		options = options || this.defaultInjectionToleranceOptions;
 
 		// Create logs to help visualization creators investigate whether loose injections work properly.
 		injectionLogs = [];
@@ -156,7 +161,7 @@ stg.RichGeoJson = Marionette.Object.extend({
 	/*
 	 * Default tolerance options.
 	 */
-	injectionToleranceOptions: {
+	defaultInjectionToleranceOptions: {
 		// When primary injection key is not matched, use backups.
 		backupKeys: [ ],
 		// Is matching case sensitive.

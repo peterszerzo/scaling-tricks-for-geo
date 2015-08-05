@@ -1,8 +1,8 @@
 /* 
- *  Extend from Marionette.js' Object constructor to have access to an event system
+ *  Extend from Backbone's view constructor to have access to an event system
  *  and an initialize method.
  */ 
-stg.StatesView = Marionette.Object.extend({
+stg.StatesView = Backbone.View.extend({
 
     /*
      * Backbone's initializer called when an instance is created.

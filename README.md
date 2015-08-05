@@ -2,20 +2,19 @@ Draft blog post and example project.
 
 # On Scalable Interactive Mapping: Recent Favorites Tricks
 
-I spent some time thinking up some strategies that made my recent interactive mapping code less bulky, more modular, and best of all, fun to write and maintain. I finally extracted and collected them into this blog post. For those of you eager to jump right to live, breathing code, this [demo project](https://github.com/pickled-plugins/scaling-tricks-for-geo) uses most of the tricks I talk about, with an emphasis on showing patterns as opposed to being granularly refactored for production use.
+I spent some time thinking up some coding patterns that made my recent interactive mapping code less bulky, more modular, and all in all more fun to write and maintain. Finally, I extracted and collected them into this blog post. For those of you looking to see live, breathing code, this [demo project](https://github.com/pickled-plugins/scaling-tricks-for-geo) sums things up in a somewhat unpolished nutshell.
 
-Here are some of the topics I touch on:
+Some topics I touch on:
 * a focused look at interactive data visualizations within larger front-end architectures.
 * a smarter flavor of geodata that reintroduces featureful data models inside interactive map views.
 * a scetch of a visualization lifecycle that works the same way for various forms of displayable data, whether they need additional shape files loaded or not.
+* a word on visualization.
 
-The technology stack used for demonstration: [d3.js](http://d3js.org/) render using [Backbone.js](http://backbonejs.org/) data models, carried over into [GeoJSON](http://geojson.org/) format The ideas and code samples from this post may work well with other MV* frameworks or in [React](http://facebook.github.io/react/) apps, and especially as lightweight helpers if you don't use a framework at all. In fact, the [project](http://atlas.newamerica.org) that first used patterns from this blog post is in transition to React, so there is a good chance I may follow up with specifics.
+The technology stack: [d3.js](http://d3js.org/) render using [Backbone.js](http://backbonejs.org/) data models, carried over into [GeoJSON](http://geojson.org/) format. That said, the ideas and code samples from this post may work well with other MV* frameworks or in [React](http://facebook.github.io/react/) apps, and especially as lightweight helpers if you don't use a framework at all. In fact, the [project](http://atlas.newamerica.org) that first used patterns from this blog post is in transition to React, so there is a good chance I may follow up with specifics.
 
-To run the [demo project](https://github.com/pickled-plugins/scaling-tricks-for-geo) on your local machine, navigate to the root of the project folder in the command line and run a simple Python server such as ``python -m SimpleHTTPServer 1848``. Then, in the browser, navigate to ``localhost:1848``. The main rendering code is in ``src/app.js``, which points to other important bits and pieces of JavaScript.
+All that put aside for a split second, though, I just want to say that I am really excited to do a technical blog for the very first time. I hope you enjoy!
 
-When you're back, or if you're still with me, let's dive in!
-
-## Interactive GeoData Visualizations in Client-side Apps
+## Interactive GeoData Visualizations within Client-side Apps
 
 On the combined use of ``Backbone.js``, a minimalistic MV* framework and ``d3.js``, the most popular data visualization library, Shirley Wu said the following: "Yup, I totally agree, it's really not that difficult. But what I do think is challenging (and interesting), is to use them together well". I resonated not only with her statement, but with her code examples she presented [on Backbone Conf III 2014](https://www.youtube.com/watch?v=TqXD0_tGPv8&list=PLlgxAbM67lYIGw8DnANC7VgREbzJRQged&index=7). I think they did a really good job ironing out the differences in which object-oriented Backbone views and functional d3 rendering workflows can be blended together. In an ever-so-slightly different flavor, these ideas found their way into my work as well.
 
@@ -25,7 +24,7 @@ Things got yet more interesting when I turned to using ``d3`` for geomapping app
 
 ### A Short-lived Misconception of Rigid Geodata
 
-In several MV* frameworks, models are available in the views with all their convenience methods. ``this.model.getSummary()``, ``@resource.createdSince()`` show up in view code across languages and frameworks for our enjoyment and convenience. When I started out rendering GeoJSON-based data, I thought I had to abandon this luxury for seemingly rigid, static constructs like the following:
+In several MV* frameworks, models are available in the views with all their convenience methods. ``this.model.getSummary()``, ``@resource.aggregate()`` show up in view code across languages and frameworks for our enjoyment and convenience. When I started out rendering GeoJSON-based data, I thought I had to abandon this luxury for seemingly rigid, static constructs like the following:
 
 	geoJson = {
 		type: 'FeatureCollection',
@@ -39,7 +38,7 @@ In several MV* frameworks, models are available in the views with all their conv
 		]
 	}
 
-Seeing my data buried into a set data structure, lacking model instance methods or template helpers I've been using extensively made me think that I had to say goodbye to the Rails-like comfort of prior, in a way more traditional MV* applications. But this really does not have to happen.
+Seeing my data buried into a set data structure, lacking model instance methods or template helpers I've been using extensively made me think that I had to say goodbye to the [Rails-like, playful comfort](https://signalvnoise.com/posts/3873-programming-with-toys-and-magic-should-be-relished-not-scorned) of my prior MV* work. But this really does not have to happen.
 
 My initial take was to examine the feature object for an ``id`` or any other property I could use to link to an outside, comprehensive data model, keeping my good old collection separate from the GeoJSON. But I knew I could swim against the current less. Turns out, if I passed a GeoJSON file over to a ``d3`` rendering module with rich, logic-packed Backbone models smuggled into its feature collection, I would get no complaints. Here is what I ended up with:
 
@@ -67,7 +66,7 @@ If we look at a sample rendering code, we see how easily we retrieve these refer
 			/* And hello again! */
 		});
 
-To facilitate smuggling, or more formally, injecting model references into a GeoJSON object, I wrote a constructor that generates GeoJSON-like objects directly passable to d3 for rendering, along with some mixins and convenience methods for building, extending or converting static data into the above format. I named this constructor ``stg.RichGeoJSON()`` (``stg`` is the global namespace, acronym for scaling tricks for geo), referenced in the test project and in the post from this point on.
+To facilitate smuggling, or more formally, injecting model references into a GeoJSON object, I wrote a constructor that generates GeoJSON-like objects directly passable to d3 for rendering, along with some mixins and convenience methods for building, extending or converting static data into the above format. I named this constructor ``stg.RichGeoJSON()`` (mind the ``stg``, or scaling tricks for geo namespace), referenced in the test project and in the post from this point on.
 
 I was very excited to find that ``d3`` is so welcoming to smarter objects like this, so I went ahead and enhanced them some more. Could a build-in event system be useful? Anything else? Let's find out.
 
@@ -144,29 +143,45 @@ The data- and model-related implementations above centered around polymorphism, 
 
 At this point, I really got used to Backbone views, and so, inspired by Shirley's code examples, I ended up splitting up my d3 code into methods of a custom view object - methods that copy a Backbone view's API and thus behave like any other view my app uses.
 
-	// Extend from Backbone's view to have access to an event system
-	//   and a more expressive constructor definition.
-	stg.GeoView = Backbone.View.extend({
+	/* 
+	 *  Extend from Marionette.js' Object constructor to have access to an event system
+	 *  and an initialize method.
+	 */ 
+	stg.GeoView = Marionette.Object.extend({
 
-		// Set container and data.
+		/*
+	     * Backbone's initializer called when an instance is created.
+	     * Sets container and data.
+	     */ 
 		initialize: function(options) {},
 
+		/*
+	     * Render visualization, set attributes and event listeners.
+	     * Called only when the data changes.
+	     */ 
 		render: function() {},
 
-		// Render svg content.
-		render: function() {},
+		/*
+	     * Render the visualizations svg container and an inside group. 
+	     * Store these on the instance.
+	     */ 
+		renderSvgContainer: function() {},
 
-		// Render the visualizations svg container and an inside group. Store these on the instance.
-		//   Called from within this.render().
-		_renderSvgContainer: function() {},
+		/*
+	     * Set or update attributes. Called within render, and as a lightweight update method
+	     *   when the data doesn't change, but its presentation does (e.g. when a map is recolored).
+	     */
+		setAttributes: function() {},
 
-		// Update attributes. Called within render, and as a lightweight update method
-		//   when the data doesn't change, but its presentation does (e.g. when a map is recolored).
-		updateAttributes: function(feature) {
-			var model = feature._model;
-		},
+		/*
+	     * Get class name for a feature. 
+	     * Use _model references to have access to attributes and instance methods.
+	     */
+		getFeatureClass: function(feature) {},
 
-		// Unbind event listeners and remove elements.
+		/*
+	     * Destroys view by unbinding event listeners and removing dom elements.
+	     */
 		destroy: function() {}
 
 	});
@@ -194,16 +209,10 @@ Putting all the pieces together, here is how a map pin visualization could look 
 
 	}());
 
-This is by no means polished code. On actual applications, I moved all logic generating ``richGeoJson`` into an instance method on the collection. Generating the view ended up in a controller module. The API changed a little bit to conform to make things more consistent across a larger codebase. 
+Note that this is by no means polished code. On actual applications, I moved all logic generating ``richGeoJson`` into an instance method on the collection. Generating the view ended up in a controller module. The API changed a little bit to conform to make things more consistent across a larger codebase. My goal was not presenting a library, perhaps just a few ideas on how one could be created, if a formalized version makes sense for your project. In this example, extending the view from a handy, well-documented base class would undoubtedly make things a bit more clear. This could become an open-source miniproject, and if you're interested in having it around, please let me know.
 
-You may have noticed that this post is not presenting a library, perhaps just a few ideas on how one could be created, if a formalized version makes sense for your project. For me at the moment, I don't think it does.
+## So, Worth it?
 
-## So, worth it?
-
-I think so. From personal experience, these tricks do give some organizational and semantic clarity, more code reuse and more flexibility to implement new features. What do you think? Care to do me a favor and head over to [GitHub](https://github.com/pickled-plugins/scaling-tricks-for-geo/issues) and write down some thought?
+I think so. From personal experience, these tricks do give some organizational and semantic clarity, more code reuse and more flexibility to implement new features. What do you think? Care to do me a favor and head over to [GitHub](https://github.com/pickled-plugins/scaling-tricks-for-geo/issues) and write down some thoughts?
 
 Otherwise, or until then, happy mapping!
-
-## Acknowledgements
-
-Many thanks for Tom McWright and Georgia Bullen for reviewing the content and clarity of this post. Since it is the very first one I publish, their encouragement went a long way.

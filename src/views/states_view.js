@@ -1,8 +1,8 @@
 /* 
- *  Extend from Marionette.js' Object constructor to have access to an event system
+ *  Extend from Backbone's View constructor to have access to an event system
  *  and an initialize method.
  */ 
-stg.StatesView = Marionette.Object.extend({
+stg.StatesView = Backbone.View.extend({
 
     /*
      * Backbone's initializer called when an instance is created.
@@ -25,6 +25,7 @@ stg.StatesView = Marionette.Object.extend({
      * Called only when the data changes.
      */ 
     render: function() {
+        console.log(this.richGeoJson);
         this.renderSvgContainer();
         this.g.selectAll('path')
             .data(this.richGeoJson.features)
@@ -44,7 +45,6 @@ stg.StatesView = Marionette.Object.extend({
         this.svg = d3.select(this.el).append('svg');
         this.g = this.svg.append('g');
     },
-
 
     /*
      * Set or update attributes. Called within render, and as a lightweight update method

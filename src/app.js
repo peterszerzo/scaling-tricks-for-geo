@@ -29,7 +29,7 @@ stg.runApp = function() {
 			v.render();
 			v.on('summary:change', function(text) {
 				$('.viz__text').html(text);
-			});
+			}); // This example does not destroy this view, so no unbinding is necessary here.
 		};
 
 		//

@@ -144,7 +144,7 @@ The data- and model-related implementations above centered around polymorphism, 
 At this point, I really got used to Backbone views, and so, inspired by Shirley's code examples, I ended up splitting up my d3 code into methods of a custom view object - methods that copy a Backbone view's API and thus behave like any other view my app uses.
 
 	/* 
-	 *  Extend from Marionette.js' Object constructor to have access to an event system
+	 *  Extend from Backbone's View constructor to have access to an event system
 	 *  and an initialize method.
 	 */ 
 	stg.GeoView = Marionette.Object.extend({

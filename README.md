@@ -123,6 +123,33 @@ The ``injectOptions`` specifies additional options that can be used to match mod
 
 ``#injectCollections()`` would then return join statistics such as how many collection items could be injected, if there were several that could have been injected into the same GeoJSON feature, and so on (feature not yet implemented in the test project). Join options, back up keys and join strictness could then be refined based on the feedback from any previous attempt, even to a certain degree of automation. This workflow is sketched out in comments for now, and I welcome further ideas and code contribution to finish it up.
 
+This approach works well for apps where multiple data formats need to be supported (inconsistent data, user input). An alternate approach would be to format the data to make the join logic more universal. After [Tom MacWright](http://www.macwright.org/about/) kindly devoted some of his time to review this post, he suggested the following syntax:
+
+	statesData = [
+		{ 
+			name: 'Nebraska', 
+			population: 1868516, 
+			region: 'Midwest',
+			geometry: {
+				type: 'Join',
+				id: 'Nebraska',
+				collection: 'states'
+			}
+		},
+		{ 
+			name: 'Arizona', 
+			population: 6626624, 
+			region: 'Southwest',
+			geometry: {
+				type: 'Join',
+				id: 'Arizona',
+				collection: 'states'
+			}
+		}
+	];
+
+By formatting data this way, either the ``#injectCollections()`` method becomes much simpler to facilitate building a separate ``RichGeoJson`` instance, or, since this is already starting to look like a GeoFeature, shape data may end up right inside the collection data.
+
 ### Sync and Async GeoJSON in the Same App
 
 The above implementations for the US states visualization and the map pins one look a bit different. The latter is synchronous and yields ``richGeoJSON`` immediately, while the former may keep a spinner icon waiting through a two-second server lag before it retrieves the shape data and carries on with the rendering. I am not very happy keeping these different implementations in mind, adding rendering logic in different places, one roaming free and the other buried inside an ajax callback. I settled with writing asynchronous(-looking) code whether I needed it or not, as follows:

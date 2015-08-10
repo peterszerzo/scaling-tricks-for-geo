@@ -235,7 +235,7 @@ Putting all the pieces together, here is how a map pin visualization could look 
 
 	}());
 
-Note that this is by no means polished code. On actual applications, I moved all logic generating ``richGeoJson`` into an instance method on the collection. Generating the view ended up in a controller module. The API changed a little bit to conform to make things more consistent across a larger codebase. My goal was not presenting a library, perhaps just a few ideas on how one could be created, if a formalized version makes sense for your project. In this example, extending the view from a handy, well-documented base class would undoubtedly make things a bit more clear. This could become an open-source miniproject, and if you're interested in having it around, please let me know.
+Note that this is by no means polished code. On actual applications, I moved all logic generating ``richGeoJson`` into an instance method on the collection. Generating the view ended up in a controller module. The API changed a little bit to conform to make things more consistent across a larger codebase. My goal here is not to present a library, perhaps just a few ideas on how one could be created, if a formalized version makes sense for your project. In this example, extending the view from a handy, well-documented base class would undoubtedly make things a bit more clear. This could become an open-source miniproject, and if you're interested in having it around, please let me know.
 
 ## So, Worth it?
 

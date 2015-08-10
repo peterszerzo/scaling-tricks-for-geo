@@ -2,13 +2,11 @@ Draft blog post and example project.
 
 # On Scalable Interactive Mapping: Recent Favorites Tricks
 
-I spent some time thinking up some coding patterns that made my recent interactive mapping code less bulky, more modular, and all in all more fun to write and maintain. Finally, I extracted and collected them into this blog post. For those of you looking to see live, breathing code, this [demo project](https://github.com/pickled-plugins/scaling-tricks-for-geo) sums things up in a somewhat unpolished nutshell.
-
-Some topics I touch on:
+I spent some time thinking up some software tricks that made my recent interactive mapping code less bulky, more modular, and all in all more fun to write and maintain. Finally, I extracted and collected them into this blog post. For those of you looking to see live, breathing code, this [demo project](https://github.com/pickled-plugins/scaling-tricks-for-geo) sums things up in a somewhat unpolished nutshell. Otherwise, help yourselves right below for a couple of ideas on the following topics:
 * a focused look at interactive data visualizations within larger front-end architectures.
 * a smarter flavor of geodata that reintroduces featureful data models inside interactive map views.
 * a scetch of a visualization lifecycle that works the same way for various forms of displayable data, whether they need additional shape files loaded or not.
-* a word on visualization.
+* a structure for rendering code that works with all of the above.
 
 The technology stack: [d3.js](http://d3js.org/) render using [Backbone.js](http://backbonejs.org/) data models, carried over into [GeoJSON](http://geojson.org/) format. That said, the ideas and code samples from this post may work well with other MV* frameworks or in [React](http://facebook.github.io/react/) apps, and especially as lightweight helpers if you don't use a framework at all. In fact, the [project](http://atlas.newamerica.org) that first used patterns from this blog post is in transition to React, so there is a good chance I may follow up with specifics.
 
@@ -57,6 +55,7 @@ If we look at a sample rendering code, we see how easily we retrieve these refer
 		.data(geoJson.features)
 		.enter()
 		.append('path')
+		// insert code here that assigns 'd' attributes on the path based on feature geometry data
 		.attr('class', function(feature) {
 			var model = feature._model;
 			/* Hello, model! */
